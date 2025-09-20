@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Churn Prediction</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      display: flex; justify-content: center; align-items: center;
+      height: 100vh; background: #f4f6f9;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      max-width: 1200px;
+      width: 95%;
+    }
+    h2 { text-align: center; margin-bottom: 20px; color: #333; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    input, select {
+      width: 100%; padding: 8px;
+      border: 1px solid #ccc; border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%; margin-top: 20px;
+      background: #007BFF; color: white;
+      padding: 12px; border: none; border-radius: 6px;
+      font-size: 16px; cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
+    .result {
+      margin-top: 20px; padding: 12px; text-align: center;
+      font-size: 18px; border-radius: 6px;
+    }
+    .churn { background: #ffe5e5; color: #d9534f; }
+    .stay { background: #e5ffe5; color: #28a745; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Customer Churn Prediction</h2>
+    <form id="churnForm" class="grid">
+      <!-- Column 1 -->
+      <div>
+        <label>Gender</label>
+        <select id="gender"><option>Male</option><option>Female</option></select>
+
+        <label>Senior Citizen</label>
+        <select id="SeniorCitizen"><option>No</option><option>Yes</option></select>
+
+        <label>Partner</label>
+        <select id="Partner"><option>No</option><option>Yes</option></select>
+
+        <label>Dependents</label>
+        <select id="Dependents"><option>No</option><option>Yes</option></select>
+
+        <label>Phone Service</label>
+        <select id="PhoneService"><option>No</option><option>Yes</option></select>
+
+        <label>Paperless Billing</label>
+        <select id="PaperlessBilling"><option>No</option><option>Yes</option></select>
+      </div>
+
+      <!-- Column 2 -->
+      <div>
+        <label>Multiple Lines</label>
+        <select id="MultipleLines">
+          <option>No</option><option>Yes</option><option>No phone service</option>
+        </select>
+
+        <label>Internet Service</label>
+        <select id="InternetService">
+          <option>DSL</option><option>Fiber optic</option><option>No</option>
+        </select>
+
+        <label>Online Security</label>
+        <select id="OnlineSecurity">
+          <option>No</option><option>Yes</option><option>No internet service</option>
+        </select>
+
+        <label>Online Backup</label>
+        <select id="OnlineBackup">
+          <option>No</option><option>Yes</option><option>No internet service</option>
+        </select>
+
+        <label>Device Protection</label>
+        <select id="DeviceProtection">
+          <option>No</option><option>Yes</option><option>No internet service</option>
+        </select>
+
+        <label>Tech Support</label>
+        <select id="TechSupport">
+          <option>No</option><option>Yes</option><option>No internet service</option>
+        </select>
+      </div>
+
+      <!-- Column 3 -->
+      <div>
+        <label>Streaming TV</label>
+        <select id="StreamingTV">
+          <option>No</option><option>Yes</option><option>No internet service</option>
+        </select>
+
+        <label>Streaming Movies</label>
+        <select id="StreamingMovies">
+          <option>No</option><option>Yes</option><option>No internet service</option>
+        </select>
+
+        <label>Contract</label>
+        <select id="Contract">
+          <option>Month-to-month</option><option>One year</option><option>Two year</option>
+        </select>
+
+        <label>Payment Method</label>
+        <select id="PaymentMethod">
+          <option>Electronic check</option><option>Mailed check</option>
+          <option>Bank transfer (automatic)</option><option>Credit card (automatic)</option>
+        </select>
+
+        <label>Tenure (Months)</label>
+        <input type="number" id="tenure" value="12" required>
+
+        <label>Monthly Charges</label>
+        <input type="number" id="MonthlyCharges" step="0.01" value="70.0" required>
+
+        <label>Total Charges</label>
+        <input type="number" id="TotalCharges" step="0.01" value="2000.0" required>
+      </div>
+    </form>
+
+    <button type="submit" form="churnForm">Predict</button>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    document.getElementById("churnForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const data = {
+        gender: document.getElementById("gender").value,
+        SeniorCitizen: document.getElementById("SeniorCitizen").value,
+        Partner: document.getElementById("Partner").value,
+        Dependents: document.getElementById("Dependents").value,
+        PhoneService: document.getElementById("PhoneService").value,
+        PaperlessBilling: document.getElementById("PaperlessBilling").value,
+        MultipleLines: document.getElementById("MultipleLines").value,
+        InternetService: document.getElementById("InternetService").value,
+        OnlineSecurity: document.getElementById("OnlineSecurity").value,
+        OnlineBackup: document.getElementById("OnlineBackup").value,
+        DeviceProtection: document.getElementById("DeviceProtection").value,
+        TechSupport: document.getElementById("TechSupport").value,
+        StreamingTV: document.getElementById("StreamingTV").value,
+        StreamingMovies: document.getElementById("StreamingMovies").value,
+        Contract: document.getElementById("Contract").value,
+        PaymentMethod: document.getElementById("PaymentMethod").value,
+        tenure: parseInt(document.getElementById("tenure").value),
+        MonthlyCharges: parseFloat(document.getElementById("MonthlyCharges").value),
+        TotalCharges: parseFloat(document.getElementById("TotalCharges").value)
+      };
+
+      const response = await fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `Prediction: <b>${result.prediction}</b> (Probability: ${result.probability})`;
+      resultDiv.className = "result " + (result.prediction === "Churn" ? "churn" : "stay");
+    });
+  </script>
+</body>
+</html>
